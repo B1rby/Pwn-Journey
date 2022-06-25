@@ -221,6 +221,8 @@ syscall = 0x000000000041e0d4
 
 We have now all the gadgets that we want. For now I will use the same exploit but just modify it a little bit. So this is the [final exploit](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/exploit2.pl).
 
+### Issues !
+
 Then let's see if it makes the stack executable. Let's run the program in gdb with the payload
 
 ![image](https://user-images.githubusercontent.com/87600765/175784739-e668c32b-cc6c-4120-bf38-1c625cb561c3.png)
@@ -246,6 +248,8 @@ And this is because of this new line feed that our ropchain stop because when th
 ![image](https://user-images.githubusercontent.com/87600765/175784520-e35245a9-e6a0-40a3-bb6d-627ae3edcce4.png)
 
 Actually you can use this 3 gadgets but you will need to substract the initial value with the value added by the gadget. In this case we can simply use this `add rax, 1 ; ret`. So `0xa` - 1 = `0x9`
+
+### Fixes
 
 So instead put the value of `0xa` in `rax` we will put `0x9` and then add 1 to `rax` so let's modify our exploit. [Here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/exploit2-fixed.pl) is the final exploit. So let's examine what finally happened. 
 
