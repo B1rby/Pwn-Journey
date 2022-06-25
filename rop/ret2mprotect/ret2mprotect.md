@@ -266,3 +266,4 @@ After the syscall, the stack is executable and our new exploit works.
 
 ![image](https://user-images.githubusercontent.com/87600765/175786120-4fd1e0e8-9f83-4ed9-8583-2bf6e1ed8b6b.png)
 
+And [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/exploit2.py) a python version with pwntools. 
