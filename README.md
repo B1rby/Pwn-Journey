@@ -1,4 +1,6 @@
-# Art-of-Exploitation
+## Art-of-Exploitation
+
+Rop techniques to bypass mitigations:
 
 - [ret2mprotect](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/ret2mprotect.md)
 
