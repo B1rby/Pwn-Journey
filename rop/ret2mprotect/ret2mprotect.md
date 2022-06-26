@@ -152,10 +152,9 @@ print $nops . $shellcode . $offset . $pop_rdi . $stack_address . $pop_rsi . $sta
 ```
 ### Stack is rwx ?
 
-Before choosing a return address for our shellcode I wanted to show you how our payload behaves with the binary during calling mprotect. I will open gdb, unset
-the env and put a breakpoint at main. The I am gonna run the program with the payload (`./vuln.pl > payload` to create the payload) and put a second break point at the ret address. After I will put `c` for continuing and `si` for a single instruction at machine level.
+Before choosing a return address for our shellcode I wanted to show you how our payload behaves with the binary during calling mprotect. I will open gdb, and put a breakpoint at main. The I am gonna run the program with the payload (`./vuln.pl > payload` to create the payload) and put a second break point at the ret address. After I will put `c` for continuing and `si` for a single instruction at machine level.
 
-![image](https://user-images.githubusercontent.com/87600765/175778626-a7977fb8-c545-497d-ab53-686e33a533d3.png)
+![image](https://user-images.githubusercontent.com/87600765/175805188-b4fda3ad-27e9-4061-9ad5-f92df1c8fd26.png)
 
 ![image](https://user-images.githubusercontent.com/87600765/175778650-bce0a1a5-a8fa-40ca-b189-58e91875e35c.png)
 
