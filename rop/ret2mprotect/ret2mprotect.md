@@ -6,25 +6,11 @@ The mprotect() function is used to change the access protection of a memory map
 First of all, the ret2mprotect function is way easier to use comparing to a ret2libc and can be use wheter the binary is statically linked or dynamically linked. Yeah, if the binary is statically linked you won't be able to do ret2libc since there is no libc which is logic.
 
 ### Practice
+You can found the file [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/vuln.c). To compile the binary use this command. 
+```bash
+└─# gcc vuln4.c -o vuln4 -fno-stack-protector -no-pie
+```` 
 
-```c
-#include <stdio.h>
-#include <string.h>
-
-int main(int argc, char **argv){
-
-    char buffer[260];
-    int len, i;
-    printf("Welcome in Birby Enterprise\n");
-    printf("To join the company, please register with your full name: ");
-    gets(buffer);
-    len = strlen(buffer);
-    printf("Welcome %s in Birby Enterprise\n", buffer);
-
-    return 0;
-
-}
-```
 ##### File and Security
 
 Only NX is enabled.NX or DEP (In Windows) is a protection really important for your binaries. It will "says to the stack to don't execute what there is in". So the stack will "refuse" to execute code on the stack. So we won't be able to inject a shellcode in it. It's why the Return Oriented Programming technique is really important because it will allow you to bypass this annoying protection in different ways. But you will see that we can make this stack executable again thanks to the ret2mprotect technique.
