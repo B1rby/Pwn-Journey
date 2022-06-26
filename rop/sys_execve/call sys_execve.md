@@ -16,7 +16,7 @@ This technique is really useful when the binary is statically linked s you can't
 You can found the binary [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/vuln.c). To compile it use this command. Of course you need to enable ASLR with the command below
 
 ```bash
-└─# gcc vuln.c -o vuln -fno-stack-protector -no-pie
+└─# gcc vuln.c -o vuln -fno-stack-protector -no-pie -static
 ```
 
 ### sys_execve
