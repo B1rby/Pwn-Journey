@@ -8,7 +8,7 @@ First of all, the ret2mprotect function is way easier to use comparing to a ret2
 ### Practice
 You can found the file [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/vuln.c). To compile the binary use this command. 
 ```bash
-└─# gcc vuln4.c -o vuln4 -fno-stack-protector -no-pie
+└─# gcc vuln.c -o vuln -fno-stack-protector -no-pie
 ```` 
 
 ##### File and Security
