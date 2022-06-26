@@ -13,7 +13,7 @@ This technique is really useful when the binary is statically linked s you can't
 
 ### Practice
 
-You can found the binary [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/vuln.c). To compile it use this command. Of course you need to enable ASLR with the command below
+You can found the binary [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/vuln.c). To compile it use this command. Of course you need to enable ASLR with the command above.
 
 ```bash
 └─# gcc vuln.c -o vuln -fno-stack-protector -no-pie -static
@@ -26,4 +26,8 @@ Of course for this we will follow the syscall table.
 
 ##### Gadgets
 
-We will use only gadgets for it so according to the syscall table we will need to put in rax `0x3b`, in rdi the address of our string, in rsi `0x0` and in rdx `0x0`. For our rop chain we will need gadgets ending with ret (`pop rip`)of course, so we will need a `pop rax`, `pop rdi`, `pop rsi` and `pop rdx`.
+We will use only gadgets for it so according to the syscall table we will need to put in rax `0x3b`, in rdi the address of our string, in rsi `0x0` and in rdx `0x0`. For our rop chain we will need gadgets ending with ret (`pop rip`)of course, so we will need a `pop rax`, `pop rdi`, `pop rsi` and `pop rdx` and of course the syscall. For this I will use ropper to find the gadgets.
+
+![image](https://user-images.githubusercontent.com/87600765/175832399-b6d9ec6e-9ea4-4af8-a384-4cc74ee797d0.png)
+
+done ! But wait, we don't have the argument /bin/sh. How we gonna have it ? We gonna simply write `/bin/sh`. To do this we need an address where to write the string, and a gadget to put it there. Ho we do in assembly we can write our `/bin/sh` string in the `.data` section. To have the address of the data section we simply do an info files on gdb.
