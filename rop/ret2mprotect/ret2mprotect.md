@@ -48,6 +48,7 @@ Previous frame's sp is `0x7fffffffe400` = It is where the previous frame´s stac
 Then we just need to use `pattern offset`.
 
 ![image](https://user-images.githubusercontent.com/87600765/175770504-05d09791-3e7e-4c55-989a-61016a8ef5cc.png)
+
 it means that we need 280 bytes before reaching rip. So if we send 288 bytes the last 8 bytes will be in rip.
 
 ### Mprotect
