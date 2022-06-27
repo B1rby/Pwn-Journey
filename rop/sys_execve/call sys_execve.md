@@ -24,6 +24,26 @@ You can found the binary [here](https://github.com/B1rby/Art-of-Exploitation/blo
 Of course for this we will follow the syscall table.
 ![image](https://user-images.githubusercontent.com/87600765/175819535-cb7fd23e-eee9-4e95-b8e6-98a47e13d70c.png)
 
+### Offset 
+First of all we need to know the amount of bytes we need before overwrite RIP (Instruction Pointer) to overflow the binary and then exploit it. For this I 'am gonna use gef. I will create a pattern of 300 bytes, then I am gonna send it.
+
+![image](https://user-images.githubusercontent.com/87600765/175960675-6d704766-b3cd-4a2c-9978-05f598a5932d.png)
+
+To know the rip value during the segfault, we do an info frame.
+
+![image](https://user-images.githubusercontent.com/87600765/175960832-0ba7f3e6-598f-4856-942b-d5e0fd8aae8e.png)
+
+You can see that the binary receives a segfault because the address of rip was overwritten so the address in it is an address that doesn't exist so the program doesn't know where to go and crashes. Now let's take a look at the saved rip. saved rip is the return address so it's a callee saved register. Across calls, these registers have to have a preserved value. To saved this register the program pushes it on the stack, then the call is down and then it pops it from the stack. So right now we want the value of the saved rip register with the pattern that we sent. For this we can do an info frame. This command allows us to have information about the stack frame. As you know the stack frame is used for storing local functions variables and context during function calls. In this case the rip is stored on this stack frame because during functions call the value in rip can change.
+
+stack level 0 = frame number in backtrace, 0 is the currently executing frame, which grows downwards, which is how the stack grows. frame at `0x7fffffffe228` = It's the starting memory address of this stack frame. rip = `0x401889` in main; saved rip = 0x6361617663616175(overflowed by the padding) = RIP which is the instruction pointer points to the next instruction to execute. In this case, the next instruction is at `0x401889`. For the saved rip is the explanation is right above. Arglist at `0x6361617463616173`, args = It's the starting address of the arguments. Locals at `0x6361617463616173` = It's the address of local variables. Previous frame's sp is `0x7fffffffe230` = It is where the previous frame´s stack pointer points to (the caller frame), at the moment of calling, it is also the starting memory address of called stack frame.
+
+Then we just need to use `pattern offset`.
+
+![image](https://user-images.githubusercontent.com/87600765/175982432-d7eaf7aa-5745-4452-9fbf-948a6ff68739.png)
+
+it means that we need 280 bytes before reaching rip. So if we send 288 bytes the last 8 bytes will be in rip.
+
+
 ##### Gadgets
 
 We will use only gadgets for it so according to the syscall table we will need to put in rax `0x3b`, in rdi the address of our string, in rsi `0x0` and in rdx `0x0`. For our rop chain we will need gadgets ending with ret (`pop rip`)of course, so we will need a `pop rax`, `pop rdi`, `pop rsi` and `pop rdx` and of course the syscall. For this I will use ropper to find the gadgets.
@@ -42,5 +62,11 @@ As expected, we clearly have enough space since we gonna use only 8 bytes for `/
 
 ![image](https://user-images.githubusercontent.com/87600765/175904922-18f2727e-b388-4250-b0c5-95350f0eb3ff.png)
 
-I am gonna use this gadget so we will need to pop the address of the data section in `rax` and the `/bin/sh` string in `rdx`.
+I am gonna use this gadget so we will need to pop the address of the data section in `rax` and the `/bin/sh` string in `rdx`. Ok, so we can now starting writing our exploit. 
+
+```pl
+#!/usr/bin/perl
+
+$| = 1;
+
 
