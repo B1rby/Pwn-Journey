@@ -31,3 +31,16 @@ We will use only gadgets for it so according to the syscall table we will need t
 ![image](https://user-images.githubusercontent.com/87600765/175832399-b6d9ec6e-9ea4-4af8-a384-4cc74ee797d0.png)
 
 done ! But wait, we don't have the argument /bin/sh. How we gonna have it ? We gonna simply write `/bin/sh`. To do this we need an address where to write the string, and a gadget to put it there. Ho we do in assembly we can write our `/bin/sh` string in the `.data` section. To have the address of the data section we simply do an info files on gdb.
+
+![image](https://user-images.githubusercontent.com/87600765/175888983-f1beb37a-a137-4664-8ba9-3081b8f7e59d.png)
+
+As you can see there are two addresses. The first address is where the data section starts and the second one is where the data section end. To be sure we can verify if there is enough space for our string so we can substract the end address with the start address.
+
+![image](https://user-images.githubusercontent.com/87600765/175900726-fa3bf82c-e876-4d41-a695-72d123ce19d2.png)
+
+As expected, we clearly have enough space since we gonna use only 8 bytes for `/bin/sh`. Now how we write it there. Well, to do it we can simply pop the address of the data section in a register, pop the string /bin/sh in another register and `mov`e the register with `/bin/sh` in the location pointed to by the register having the address of the data section. So for our last gadget we need a `mov [reg], reg` gadget.
+
+![image](https://user-images.githubusercontent.com/87600765/175904922-18f2727e-b388-4250-b0c5-95350f0eb3ff.png)
+
+I am gonna use this gadget so we will need to pop the address of the data section in `rax` and the `/bin/sh` string in `rdx`.
+
