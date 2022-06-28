@@ -19,11 +19,6 @@ You can found the binary [here](https://github.com/B1rby/Art-of-Exploitation/blo
 └─# gcc vuln.c -o vuln -fno-stack-protector -no-pie -static
 ```
 
-### sys_execve
-
-Of course for this we will follow the syscall table.
-![image](https://user-images.githubusercontent.com/87600765/175819535-cb7fd23e-eee9-4e95-b8e6-98a47e13d70c.png)
-
 ### Offset 
 First of all we need to know the amount of bytes we need before overwrite RIP (Instruction Pointer) to overflow the binary and then exploit it. For this I 'am gonna use gef. I will create a pattern of 300 bytes, then I am gonna send it.
 
@@ -44,7 +39,10 @@ Then we just need to use `pattern offset`.
 it means that we need 280 bytes before reaching rip. So if we send 288 bytes the last 8 bytes will be in rip.
 
 
-##### Gadgets
+### Gadgets
+
+Of course for this we will follow the syscall table.
+![image](https://user-images.githubusercontent.com/87600765/175819535-cb7fd23e-eee9-4e95-b8e6-98a47e13d70c.png)
 
 We will use only gadgets for it so according to the syscall table we will need to put in rax `0x3b`, in rdi the address of our string, in rsi `0x0` and in rdx `0x0`. For our rop chain we will need gadgets ending with ret (`pop rip`)of course, so we will need a `pop rax`, `pop rdi`, `pop rsi` and `pop rdx` and of course the syscall. For this I will use ropper to find the gadgets.
 
@@ -87,7 +85,7 @@ Let's debug what the payload is doing.
 
 ![image](https://user-images.githubusercontent.com/87600765/176023371-054fd3fd-de8d-4c04-9808-8a4562d08cbc.png)
 
-So as you can see here rip is pointing to the gadget pop rdx which is about to be execute. and the /bin/sh string is in the top of the stack.
+So as you can see here rip is pointing to the gadget `pop rdx` which is about to be execute. and the `/bin/sh string` is in the top of the stack.
 
 ![image](https://user-images.githubusercontent.com/87600765/176023784-088b3a81-ef1f-4012-9c71-0ee732e3a972.png)
 
@@ -98,8 +96,13 @@ So here the string and the data section where poped of the stack. And as you can
 ![image](https://user-images.githubusercontent.com/87600765/176024268-fd93ae7c-c1b8-40b9-81c5-22c72e9ff305.png)
 
 
-So now as you can see that after the mov gadget the /bin/sh is in the data section. 
+So now as you can see that after the mov gadget the `/bin/sh` is in the data section. 
 
 ### sys_execve
 
+Now that we have our `/bin/sh` string we can simply call sys_execve with the address where is located the string. Let's do it. The final exploit is [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/sys_execve/exploit.pl). 
+
+![image](https://user-images.githubusercontent.com/87600765/176140504-03802fa1-4349-4343-8558-877d4bd026c5.png)
+
+And it worked ! I won't step it into it since it's pretty straight forward. All the arguments were popped correctly on their registers and then after the syscall, it's executing a new program which is or `/bin/bash`.
 
