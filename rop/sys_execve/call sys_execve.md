@@ -106,3 +106,5 @@ Now that we have our `/bin/sh` string we can simply call sys_execve with the add
 
 And it worked ! I won't step it into it since it's pretty straight forward. All the arguments were popped correctly on their registers and then after the syscall, it's executing a new program which is or `/bin/bash`.
 
+You can find the py version with pwntools [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/sys_execve/exploit.py).
+
