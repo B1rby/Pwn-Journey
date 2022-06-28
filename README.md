@@ -5,7 +5,7 @@ Rop techniques to bypass mitigations:
 - [ret2mprotect call sys_mprotect (NX enabled)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/ret2mprotect.md)
 - [ret2libc (NX enabled)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2libc/ret2libc.md)
 - [call sys_execve with /bin/sh argument (NX and ASLR enabled)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/sys_execve/call%20sys_execve.md)
-- [ret2win (Baby Overflow of @seal9055)]()
+- [ret2win (Baby Overflow of @seal9055)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/pwnzero2hero/baby_overflow/baby_overflow.md)
 
 Assembly:
 - https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86_64-64_bit
