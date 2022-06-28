@@ -108,3 +108,4 @@ And it worked ! I won't step it into it since it's pretty straight forward. All 
 
 You can find the py version with pwntools [here](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/sys_execve/exploit.py).
 
+*Wikimedia Foundation. (2022, June 25). Address space layout randomization. Wikipedia. Retrieved June 28, 2022, from https://en.wikipedia.org/wiki/Address_space_layout_randomization*
