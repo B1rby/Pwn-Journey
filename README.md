@@ -1,6 +1,6 @@
 ## Art-of-Exploitation
 
-Userland exploitation:
+Rop techniques to bypass mitigations:
 
 - [ret2mprotect call sys_mprotect (NX)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/ret2mprotect.md)
 - [ret2libc (NX)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2libc/ret2libc.md)
