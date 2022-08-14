@@ -11,10 +11,11 @@ Assembly:
 - https://riptutorial.com/assembly
 - https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.pdf
 
-GNU linux:
+C (GNU linux system):
 - [Compilation]()
 - [Pointers in c in depth (in a Low level view)]()
-- [PLT and GOT (Understanding dynamic linking)]()
+- [PLT and GOT in depth (Understanding dynamic linking)]()
+- [Pipes in C (explains with schemes)]()
 
 Rop techniques to bypass mitigations:
 
