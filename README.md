@@ -13,8 +13,8 @@ Assembly:
 
 GNU linux:
 - [Compilation]()
-- [Pointers in c (in a Low level view)]()
-- [PLT and GOT(Understanding dynamic linking)]()
+- [Pointers in c in depth (in a Low level view)]()
+- [PLT and GOT (Understanding dynamic linking)]()
 
 Rop techniques to bypass mitigations:
 
