@@ -12,7 +12,7 @@ Assembly:
 - https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.pdf
 
 C (GNU linux system):
-- [Compilation]()
+- [Compilation](https://github.com/B1rby/Pwn-Journey/blob/main/C/compilation.md)
 - [Pointers in c in depth (in a Low level view)]()
 - [PLT and GOT in depth (Understanding dynamic linking)]()
 - [Pipes in C (explains with schemes)]()
