@@ -539,3 +539,21 @@ Well that was expected. In a high-level context the variable `result` in the mai
 calculator function are different because they are local variables. So when you passed in integer result from the main
 function to the calculator function a new local variable result gets created in the calculator function. So if you add 20
 to the local variable `result` in calculator it won't add 20 to the local variable `result` in the main function.  
+
+Now let's debug our program and see what really happen.
+
+![image](https://user-images.githubusercontent.com/87600765/185099694-4ac9eb25-aa68-4e0f-a90d-13c4a5f5df7b.png)
+
+I have set a couple breakpoints here. Now let's run the program from my first breakpoint because we have a lot of things to say. We gonna see what is the concept
+of stack frames and how they are setting up, the concept of function prologue and epilogue and talk clearly about what the stack and base pointer do.
+
+#### What is a stack frame ?
+
+When a **function is called in memory**, a stack frame is created for this function. The stack frames contains the saved callee register (return address), arguments and the **local variables**.
+
+![image](https://user-images.githubusercontent.com/87600765/185103143-a9ac90dc-346f-4960-b6ab-a6b18307971e.png)
+
+In fact according to the calling convention, when a function is called 
+
+
+
