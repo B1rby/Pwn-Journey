@@ -329,3 +329,15 @@ have the address of the variable `a` and
 if you dereference the address well you have 
 the integer 23 since the value of the 
 variable `a` is 23. 
+
+```nasm
+mov rax, QWORD PTR [rbp-0x10]
+add rax, 0x4
+mov eax, DWORD PTR [rax]
+```
+
+So as earlier the address in c is moved to
+rax and then 4 bytes are added to rax so
+the address holds by c is no longer the
+address of b but of a. Then it moved the
+value pointed to by rax which is 23 in eax. 
