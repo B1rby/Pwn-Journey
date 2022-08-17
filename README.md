@@ -13,7 +13,7 @@ Assembly:
 
 C (GNU linux system):
 - [Compilation](https://github.com/B1rby/Pwn-Journey/blob/main/C/compilation.md)
-- [Pointers in c and Assembly and Memory overview in depth (RAM, Stack, Heap etc.)]()
+- [Pointers in c and Assembly and Memory overview in depth (RAM, Stack, Heap etc.)](https://github.com/B1rby/Pwn-Journey/blob/main/C/pointers.md)
 - [PLT and GOT in depth (Understanding dynamic linking)]()
 - [Pipes in C (explains with schemes)]()
 
