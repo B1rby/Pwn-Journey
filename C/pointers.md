@@ -336,8 +336,206 @@ add rax, 0x4
 mov eax, DWORD PTR [rax]
 ```
 
-So as earlier the address in c is moved to
-rax and then 4 bytes are added to rax so
-the address holds by c is no longer the
-address of b but of a. Then it moved the
-value pointed to by rax which is 23 in eax. 
+So as earlier the address in `c` is moved to
+rax and then 4 bytes are added to `rax` so
+the address holds by  `c` is no longer the
+address of `b` but of `a` . Then it moved the
+value pointed to by `rax` which is 23 in `eax`.
+
+### Part 3. Pointer type and void pointer
+
+You are may be wondering why pointers 
+don't have a generic type since they
+are just stored addresses. Well, 
+remember that we can dereference a 
+pointer so the pointer needs to have the
+the data type of the value it is pointing to.
+We can also typecast our pointer to change
+it's data type. Let's take a look in a high level
+context to the code here.
+
+```c
+int main(){
+    int a = 23; 
+    int* b = &a;
+    printf("The address of b is %p\n", b);
+    printf("Dereferencing b result to: : %d\n",*b);
+    char* c = (char*) b;
+    printf("The address of b is %p\n", c);
+    printf("Dereferencing b result to: : %d\n",*c);
+    return 0;
+}
+```
+
+![image](https://user-images.githubusercontent.com/87600765/185094264-bd3a0093-e490-48b2-8dc8-51dc7c635b31.png)
+
+So as you can see we print the address contains in `b`
+and then we dereference it to see the value there. 
+Then we initialize a pointer and typecasting it into a 
+char. So it's not a pointer to integer anymore but
+a pointer to a char. Then as you can see it has the 
+same address which is normal (we gonna see that after
+the low level explanation) and then it's printing exactly
+the same value. Let's change the value of a to 
+`1020022`. I explain bellow why when when we dereference
+the character it shows `118`.
+
+![image](https://user-images.githubusercontent.com/87600765/185094543-5c4696e3-9605-4c63-a6bf-44a028a7a481.png)
+
+Let's examine it now in a low-level context. When
+the variable a was initialized with the value of `0x17`
+we know that the integer is 4 bytes. The value of
+0x17 represents in base 2 the value:
+
+![image](https://user-images.githubusercontent.com/87600765/185094708-c9035d1d-22d7-4854-a2cc-bee400d1d830.png)
+
+When the program will dereference the pointer and 
+print the value, the program will look for those 4
+bytes. You need to know that a character pointer 
+is set exactly as an integer pointer. In fact a 
+character and an integer pointer is exactly the 
+same size which is 4 bytes in a x86_64 
+architecture because they are storing addresses.
+So the data type of a pointer doesn't change 
+the initialization if it but it will only be on the 
+printf that the data type will be take in account
+in a low level view. So this is how the typecasting 
+is done.   
+
+```nasm
+mov rax, QWORD PTR [rbp-0x8] ; dereferencing rbp-0x8 and move the value into rax pseudo code: rax = *(rbp-0x8)
+mov QWORD PTR [rbp-0x10], rax ; mov rax in the memory location pointed to by rbp-0x10 pseudo code: *(rbp-0x10) = rax
+```
+
+Just some clarifications to understand what's going 
+on here. rbp-0x8 is the address of the pointer `b`. 
+and rbp-0x10 is the address of the pointer `c`. So 
+the address pointed to by rbp-0x8 is moved into 
+rax. Then the address of the pointer `b` is moved to 
+rax which points to 1020022. then the value in rax 
+is moved into the address pointed to by rbp-0x10. And 
+now our pointer is alive and have the same address 
+as the pointer `b`. But why when we print the value 
+pointed to by `c`  we have 118. Well remember a 
+character is only 1 byte. This the representation 
+of 1020022 in binary. 
+
+![image](https://user-images.githubusercontent.com/87600765/185095531-6edd1057-33da-41ef-b539-a912907a31ca.png)
+
+So since a character is only 1 byte, it's gonna
+print the value 01110110 which is 128 in base 2.
+
+
+In C we have also another type of pointer call
+the void pointer. This pointer can accepts
+any date types but you won't be able to 
+dereference a void pointer.
+```c
+int main(){
+    int a = 23;
+    void* p = &a;
+    printf("p holds the address:%p\n", p+1);
+    printf("p holds the address:%p\n", p);
+    return 0;
+}
+```
+
+![image](https://user-images.githubusercontent.com/87600765/185095927-f5846dd7-b51b-4539-ad5a-5405b042c6a5.png)
+
+
+But you can still do arithmetic with a void 
+pointer but if you try to dereference it
+you will have of course a compilation error.
+
+### Part 4: Double Pointer
+
+A double pointer is in fact not as difficult
+as you expect. It simply a pointer that 
+doesn't hold the address of a normal 
+variable but holds the address of another
+pointer. So to make it more easier a double
+pointer is a pointer to pointer so it's a 
+pointer which have the address of another 
+pointer. Let's take a look to this c program. 
+
+```c
+int main(){
+    int a = 23;
+    int* b = &a;
+    int** c = &b;
+    int ***d = &c;
+    printf("address of a is %p\n", &a);
+    printf("address of b is %p\n", &b);
+    printf("address of c is %p\n\n", &c);
+    printf("value of a is %d\n", a);
+    printf("address in b is %p\n", b);
+    printf("address in c is %p\n", c);
+    printf("address in d is %p\n\n", d);
+    printf("dereferencing b results to: %d\n", *b);
+    printf("dereferencing c results to: %d\n", **c);
+    printf("dereferencing d results to: %d\n", ***d);
+    return 0;
+}
+```
+
+![image](https://user-images.githubusercontent.com/87600765/185096149-f20f67cd-f307-4c71-84b6-1ad90a0048bf.png)
+
+The code is pretty straight forward and the 
+actions for initialize the pointers are the same
+as earlier. It's gonna do a LEA (Load Effective
+Address ) of the pointer in rax and then mov
+the address in a block of memory allocated for
+the next pointer. So `b` will have the address of `a`, 
+then `c` will have the address of `b` and then d will
+have the address of `c`. 
+
+![image](https://user-images.githubusercontent.com/87600765/185096738-45a9644c-5f53-453d-9da6-a19c39aa3d44.png)
+![image](https://user-images.githubusercontent.com/87600765/185096793-1f5b6d43-33c1-45b8-b009-b5fd7df1abf0.png)
+
+### Part 5. Pointer as function argument
+
+Let's consider this c program as a demo.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void calculator(int result){ 
+    result = result + 20;
+}
+
+int main(){
+    char buffer[100];
+    printf("Welcome in a simple calculator\n");
+    printf("Please put 1 number: ");
+    fgets(buffer, 100, stdin); 
+    int result = atoi(buffer);
+    calculator(result);
+    printf("The result is: %d", result);
+    return 0;
+}
+```
+
+First of all, we have a `calculator` function that takes
+as an argument an integer. Then we have our main
+function with a buffer array of 100 bytes. Then we 
+use the `fgets` function to take the input of our user
+and we passed as an argument our buffer array of
+100 bytes. Then we initialize an integer variable 
+named result with the `atoi` function and we passed
+as an argument our buffer and we call our calculator
+function and we passed as an argument or result
+which is an integer thanks to the `atoi` function. After
+it gets back to main and print the result. Now if you
+have some basics in c you obviously know what 
+will happen. Oh I forgot, in the `calculator` function
+the integers passed in is added up to 20. Now let's
+run it with the value 13.
+
+![image](https://user-images.githubusercontent.com/87600765/185097374-7ea9aeb4-aa01-4ffe-b4f8-b81811955f84.png)
+
+
+Well that was expected. In a high-level context the variable `result` in the main function and the variable result in the 
+calculator function are different because they are local variables. So when you passed in integer result from the main
+function to the calculator function a new local variable result gets created in the calculator function. So if you add 20
+to the local variable `result` in calculator it won't add 20 to the local variable `result` in the main function.  
