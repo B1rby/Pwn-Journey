@@ -22,6 +22,5 @@ Rop techniques to bypass mitigations:
 - [ret2mprotect call sys_mprotect (NX)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2mprotect/ret2mprotect.md)
 - [ret2libc (NX)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/ret2libc/ret2libc.md)
 - [call sys_execve with /bin/sh argument (NX and ASLR)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/sys_execve/call%20sys_execve.md)
-- [ret2win (Baby Overflow of @seal9055 NX, PIE, ASLR and FULL RELRO)](https://github.com/B1rby/Art-of-Exploitation/blob/main/rop/pwnzero2hero/baby_overflow/baby_overflow.md)
-
+- 
 Copyright © Birby 2022. The [Pwn Journey](https://github.com/B1rby/Pwn-Journey) by [B1rby](https://github.com/B1rby) is licensed under a [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/).
